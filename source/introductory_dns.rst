@@ -70,7 +70,7 @@ NXDOMAIN Records
 
     Host something.invalid.osuosl.org not found: 3(NXDOMAIN)
 
-* Some ISPs and others never server NXDOMAINS
+* Some ISPs and others never serve NXDOMAINS
 
   * Instead they point you at themselves
 
