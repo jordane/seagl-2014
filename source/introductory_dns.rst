@@ -101,7 +101,7 @@ The Thirteen
 Thirteen Nameservers
 
 * ``[a-m].root-servers.net``
-* Information at `www.root-servers.org`_
+* Information at `http://www.root-servers.org`
 * a, j are run by Verisign
 
 The Thirteen
