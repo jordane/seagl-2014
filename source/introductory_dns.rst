@@ -234,6 +234,26 @@ That was a lot of work, so we have dns caches to help us:
   * unbound
   * dnscache ({n,}djbdns)
 
+
+CNAME Records
+-------------
+
+Canonical Name is the thing pointed at, query is what points to it::
+
+    ;; QUESTION SECTION:
+    ;www.osuosl.org.          IN A
+
+    ;; ANSWER SECTION:
+    www.osuosl.org.     86399 IN CNAME web1.osuosl.org.
+    web1.osuosl.org.    86400 IN A     140.211.15.183
+
+CNAME Records
+-------------
+
+* Query for A, get A record.
+
+* Query for CNAME, get the canonical name (NOT the ip address)
+
 resolv.conf
 -----------
 
