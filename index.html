@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introductory DNS &mdash; Chef Workflow 2014.07.01 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/styles.css" type="text/css" />
+    <link rel="stylesheet" href="_static/single.css" type="text/css" />
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2014.07.01',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/common.js"></script>
+    <script type="text/javascript" src="_static/slides.js"></script>
+    <script type="text/javascript" src="_static/sync.js"></script>
+    <script type="text/javascript" src="_static/controller.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    
+    <link rel="top" title="Chef Workflow 2014.07.01 documentation" href="index.html" /> 
+  </head>
+  <body>
+
+<section
+   id="slide_container"
+   class='slides layout-regular'>
+
+
+  <article class="slide level-1" id="introductory-dns">
+<h1>Introductory DNS</h1>
+<p>Jordan Evans</p>
+<p>Operating Systems and Network Analyst</p>
+<p>Oregon State University Open Source Lab</p>
+
+</article>
+<article class="slide level-2" id="what-is-dns">
+<h2>What is DNS?</h2>
+<ul class="simple">
+<li>Domain Name System</li>
+<li>Translates domains into ip addresses<ul>
+<li>Does many other types of records too</li>
+</ul>
+</li>
+<li>Stored as a distributed Tree</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="why-is-it-useful">
+<h2>Why is it Useful?</h2>
+<ul class="simple">
+<li>No remembering IP addresses</li>
+<li>load balancing!</li>
+<li>mx records for mail</li>
+<li>decouples domains from their addresses</li>
+<li>Extensible with new record types (and many have been added)</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="a-records">
+<h2>A Records</h2>
+<p>They look like:</p>
+<div class="highlight-python"><div class="highlight"><pre>osuosl.org.     300 IN  A   140.211.15.183
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">osuosl.org.</span></tt> being the query, and <tt class="docutils literal"><span class="pre">140.211.15.183</span></tt> being the 'answer'
+<tt class="docutils literal"><span class="pre">300</span></tt> is the TTL (expiration time), <tt class="docutils literal"><span class="pre">IN</span> <span class="pre">A</span></tt> the type</p>
+<ul class="simple">
+<li>One can have more than one A record per domain</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="mx-records">
+<h2>MX Records</h2>
+<p>They look like:</p>
+<div class="highlight-python"><div class="highlight"><pre>osuosl.org.     3600    IN  MX  5 smtp3.osuosl.org.
+osuosl.org.     3600    IN  MX  5 smtp4.osuosl.org.
+osuosl.org.     3600    IN  MX  5 smtp1.osuosl.org.
+osuosl.org.     3600    IN  MX  5 smtp2.osuosl.org.
+</pre></div>
+</div>
+<ul class="simple">
+<li>MX records have priority (in this example they are all the same)</li>
+<li>When sending email, the relay looks up the MX record and sends mail there.</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="ns-records">
+<h2>NS Records</h2>
+<p>They look like:</p>
+<div class="highlight-python"><div class="highlight"><pre>osuosl.org.     86258   IN  NS  ns1.auth.osuosl.org.
+osuosl.org.     86258   IN  NS  ns2.auth.osuosl.org.
+osuosl.org.     86258   IN  NS  ns3.auth.osuosl.org.
+</pre></div>
+</div>
+<ul class="simple">
+<li>They inform where to direct DNS queries for a domain</li>
+<li>Point to other domains (which have A records)</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="nxdomain-records">
+<h2>NXDOMAIN Records</h2>
+<ul>
+<li><p class="first">Tell you there is no answer to a query:</p>
+<div class="highlight-python"><div class="highlight"><pre>Host something.invalid.osuosl.org not found: 3(NXDOMAIN)
+</pre></div>
+</div>
+</li>
+<li><p class="first">Some ISPs and others never serve NXDOMAINS</p>
+<ul class="simple">
+<li>Instead they point you at themselves</li>
+</ul>
+</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="the-root">
+<h2>The Root</h2>
+<p><tt class="docutils literal"><span class="pre">.</span></tt> is the root of the DNS tree:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ dig ns .
+;; ANSWER SECTION:
+.           512297  IN  NS  i.root-servers.net.
+.           512297  IN  NS  e.root-servers.net.
+.           512297  IN  NS  d.root-servers.net.
+.           512297  IN  NS  j.root-servers.net.
+.           512297  IN  NS  b.root-servers.net.
+.           512297  IN  NS  a.root-servers.net.
+.           512297  IN  NS  f.root-servers.net.
+.           512297  IN  NS  h.root-servers.net.
+.           512297  IN  NS  g.root-servers.net.
+.           512297  IN  NS  c.root-servers.net.
+.           512297  IN  NS  m.root-servers.net.
+.           512297  IN  NS  k.root-servers.net.
+.           512297  IN  NS  l.root-servers.net.
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="the-thirteen">
+<h2>The Thirteen</h2>
+<p>Thirteen Nameservers</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">[a-m].root-servers.net</span></tt></li>
+<li>Information at <cite>http://www.root-servers.org</cite></li>
+<li>a, j are run by Verisign</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="id1">
+<h2>The Thirteen</h2>
+<blockquote>
+<div><ul class="simple">
+<li>Information Sciences Institute - USC</li>
+<li>Cogent Communications</li>
+<li>University of Maryland</li>
+<li>NASA</li>
+<li>Internet Systems Consortium</li>
+<li>USA DOD</li>
+<li>USA Army</li>
+<li>Netnod (Autonomica) - Sweden</li>
+<li>RIPE NCC</li>
+<li>ICANN</li>
+<li>WIDE - Japan</li>
+</ul>
+</div></blockquote>
+
+</article>
+<article class="slide level-2" id="id2">
+<h2>The Thirteen</h2>
+<ul class="simple">
+<li>Typically use Anycast</li>
+<li>Each runs on as few as 1 (USC) servers, or as many as 155 (ICANN)</li>
+</ul>
+<div class="figure align-center">
+<img alt="_images/hedgehog.new.png" src="_images/hedgehog.new.png" />
+</div>
+
+</article>
+<article class="slide level-2" id="authoritative-soa">
+<h2>Authoritative (SOA)</h2>
+<ul class="simple">
+<li>A DNS server is <strong>authoritative</strong> if it has a Start of Authority (SOA) record for a domain</li>
+<li>The root-servers contain SOA records for the TLDs and gTLDs</li>
+<li>The NS servers for each (g)TLD contain SOA records for each registered domain</li>
+<li>and so on...</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="recursive-example">
+<h2>Recursive Example</h2>
+<p>First we query a <strong>NS</strong> record for <strong>.</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ dig ns .
+;; QUESTION SECTION:
+;.              IN  NS
+
+;; ANSWER SECTION:
+.           518400  IN  NS  i.root-servers.net.
+.           518400  IN  NS  a.root-servers.net.
+.           518400  IN  NS  l.root-servers.net.
+.           518400  IN  NS  f.root-servers.net.
+.           518400  IN  NS  b.root-servers.net.
+.           518400  IN  NS  d.root-servers.net.
+.           518400  IN  NS  k.root-servers.net.
+.           518400  IN  NS  g.root-servers.net.
+.           518400  IN  NS  h.root-servers.net.
+.           518400  IN  NS  m.root-servers.net.
+.           518400  IN  NS  e.root-servers.net.
+.           518400  IN  NS  c.root-servers.net.
+.           518400  IN  NS  j.root-servers.net.
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="id3">
+<h2>Recursive Example</h2>
+<p>Next we query <strong>NS</strong> for <strong>org.</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ dig ns com. @a.root-servers.net
+;; QUESTION SECTION:
+;org.               IN  NS
+
+;; AUTHORITY SECTION:
+org.            172800  IN  NS  a0.org.afilias-nst.info.
+org.            172800  IN  NS  a2.org.afilias-nst.info.
+org.            172800  IN  NS  b0.org.afilias-nst.org.
+org.            172800  IN  NS  b2.org.afilias-nst.org.
+org.            172800  IN  NS  c0.org.afilias-nst.info.
+org.            172800  IN  NS  d0.org.afilias-nst.org.
+
+;; ADDITIONAL SECTION:
+a0.org.afilias-nst.info. 172800 IN  A   199.19.56.1
+a2.org.afilias-nst.info. 172800 IN  A   199.249.112.1
+b0.org.afilias-nst.org. 172800  IN  A   199.19.54.1
+b2.org.afilias-nst.org. 172800  IN  A   199.249.120.1
+&lt;truncated&gt;
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="id4">
+<h2>Recursive Example</h2>
+<p>Next we query <strong>NS</strong> for <strong>osuosl.org.</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ dig ns osuosl.org. @199.19.56.1
+;; QUESTION SECTION:
+;osuosl.org.            IN  NS
+
+;; AUTHORITY SECTION:
+osuosl.org.     86400   IN  NS  ns3.auth.osuosl.org.
+osuosl.org.     86400   IN  NS  ns2.auth.osuosl.org.
+osuosl.org.     86400   IN  NS  ns1.auth.osuosl.org.
+
+;; ADDITIONAL SECTION:
+ns1.auth.osuosl.org.    86400   IN  A   140.211.166.140
+ns2.auth.osuosl.org.    86400   IN  A   140.211.166.141
+ns3.auth.osuosl.org.    86400   IN  A   216.165.191.53
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="id5">
+<h2>Recursive Example</h2>
+<p>Next we query <strong>A</strong> for <strong>osuosl.org.</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ dig a osuosl.org. @140.211.166.140
+;; QUESTION SECTION:
+;osuosl.org.            IN  A
+
+;; ANSWER SECTION:
+osuosl.org.     300 IN  A   140.211.15.183
+
+;; AUTHORITY SECTION:
+osuosl.org.     86400   IN  NS  ns1.auth.osuosl.org.
+osuosl.org.     86400   IN  NS  ns2.auth.osuosl.org.
+osuosl.org.     86400   IN  NS  ns3.auth.osuosl.org.
+
+;; ADDITIONAL SECTION:
+ns1.auth.osuosl.org.    86400   IN  A   140.211.166.140
+ns2.auth.osuosl.org.    86400   IN  A   140.211.166.141
+ns3.auth.osuosl.org.    3600    IN  A   216.165.191.53
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="id6">
+<h2>Recursive Example</h2>
+<p>That was a lot of work, so we have dns caches to help us:</p>
+<blockquote>
+<div><ul class="simple">
+<li>bind</li>
+<li>unbound</li>
+<li>dnscache ({n,}djbdns)</li>
+</ul>
+</div></blockquote>
+
+</article>
+<article class="slide level-2" id="cname-records">
+<h2>CNAME Records</h2>
+<p>Canonical Name is the thing pointed at, query is what points to it:</p>
+<div class="highlight-python"><div class="highlight"><pre>;; QUESTION SECTION:
+;www.osuosl.org.          IN A
+
+;; ANSWER SECTION:
+www.osuosl.org.     86399 IN CNAME web1.osuosl.org.
+web1.osuosl.org.    86400 IN A     140.211.15.183
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="id7">
+<h2>CNAME Records</h2>
+<ul class="simple">
+<li>Query for A, get A record.</li>
+<li>Query for CNAME, get the canonical name (NOT the ip address)</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="resolv-conf">
+<h2>resolv.conf</h2>
+<p>resolv.conf has <tt class="docutils literal"><span class="pre">nameserver</span></tt> entries which tell which dns servers to use:</p>
+<div class="highlight-python"><div class="highlight"><pre>nameserver 140.211.166.130
+nameserver 140.211.166.131
+</pre></div>
+</div>
+<p>Most distributions provide a package that manages resolv.conf entries when using dhcp (typically called resolvconf)</p>
+
+</article>
+
+
+</section>
+
+<section id="slide_notes">
+
+</section>
+
+  </body>
+</html>
